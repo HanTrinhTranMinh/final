@@ -28,7 +28,6 @@ public class RecentFilesAdapter extends RecyclerView.Adapter<RecentFilesAdapter.
     public interface OnItemClickListener {
         void onItemClick(RecentFile file);
         void onShareClick(RecentFile file);
-        void onMoreClick(RecentFile file);
     }
 
     public RecentFilesAdapter(List<RecentFile> recentFiles) {
@@ -76,12 +75,6 @@ public class RecentFilesAdapter extends RecyclerView.Adapter<RecentFilesAdapter.
             }
         });
         
-        holder.moreButton.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onMoreClick(file);
-            }
-        });
-        
         // Set click listener for the entire item
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -100,7 +93,6 @@ public class RecentFilesAdapter extends RecyclerView.Adapter<RecentFilesAdapter.
         TextView fileName;
         TextView fileDate;
         ImageButton shareButton;
-        ImageButton moreButton;
 
         public FileViewHolder(@NonNull View itemView) {
             super(itemView);

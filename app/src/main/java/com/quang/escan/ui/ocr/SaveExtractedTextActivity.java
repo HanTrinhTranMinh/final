@@ -77,10 +77,14 @@ public class SaveExtractedTextActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             
             // Set title based on feature type
-            if (featureType == FEATURE_EXTRACT_HANDWRITING) {
-                getSupportActionBar().setTitle(R.string.save_extracted_ink);
-            } else {
-                getSupportActionBar().setTitle(R.string.save_extracted_text);
+            switch (featureType) {
+                case FEATURE_EXTRACT_HANDWRITING:
+                    getSupportActionBar().setTitle(R.string.extract_handwriting);
+                    break;
+                case FEATURE_EXTRACT_TEXT:
+                default:
+                    getSupportActionBar().setTitle(R.string.extract_text);
+                    break;
             }
         }
         

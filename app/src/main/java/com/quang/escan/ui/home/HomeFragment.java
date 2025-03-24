@@ -120,11 +120,6 @@ public class HomeFragment extends Fragment implements
             public void onShareClick(RecentFile file) {
                 shareDocument(file);
             }
-
-            @Override
-            public void onMoreClick(RecentFile file) {
-                showFileOptions(file);
-            }
         });
         
         binding.recyclerviewRecentFiles.setAdapter(recentFilesAdapter);
@@ -137,7 +132,15 @@ public class HomeFragment extends Fragment implements
         List<ExtractedDocument> documents = libraryRepository.getAllDocuments();
         List<RecentFile> recentFiles = new ArrayList<>();
         
+        // Documents are already sorted by creation date desc from the repository
+        // Take only the 5 most recent files
+        int count = 0;
         for (ExtractedDocument document : documents) {
+            // Limit to 5 files
+            if (count >= 5) {
+                break;
+            }
+            
             // Convert ExtractedDocument to RecentFile
             Bitmap thumbnail = null;
             if (document.getImagePath() != null && !document.getImagePath().isEmpty()) {
@@ -150,8 +153,8 @@ public class HomeFragment extends Fragment implements
                 }
             }
             
-            // Format date
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.US);
+            // Format date to match the screenshot format: MM/dd/yyyy HH:mm
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US);
             String formattedDate = document.getCreationDate() != null ? 
                     dateFormat.format(document.getCreationDate()) : "Unknown";
             
@@ -165,6 +168,7 @@ public class HomeFragment extends Fragment implements
             recentFile.setDocumentId(document.getId());
             
             recentFiles.add(recentFile);
+            count++;
         }
         
         // Update UI based on data

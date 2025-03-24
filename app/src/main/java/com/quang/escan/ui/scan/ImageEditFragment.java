@@ -191,54 +191,21 @@ public class ImageEditFragment extends Fragment {
         // Crop image button
         binding.btnCrop.setOnClickListener(v -> cropImage());
         
-        // Watermark button - navigate to watermark fragment
-        binding.btnWatermark.setOnClickListener(v -> {
-            if (imagePath == null) {
-                showToast("Image not available");
-                return;
-            }
-            
-            // Save rotated image if needed
-            if (rotationDegrees > 0 && currentBitmap != null) {
-                // Save the current bitmap to the same file
-                try {
-                    java.io.FileOutputStream out = new java.io.FileOutputStream(imagePath);
-                    currentBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-                    out.flush();
-                    out.close();
-                } catch (Exception e) {
-                    Log.e(TAG, "Error saving rotated image", e);
-                    showToast("Error saving changes: " + e.getMessage());
-                    return;
-                }
-            }
-            
-            // Navigate to watermark fragment
-            Bundle args = new Bundle();
-            args.putString("imagePath", imagePath);
-            navController.navigate(R.id.action_image_edit_to_watermark, args);
-        });
+        // Set click listener for the back button
+        binding.btnBack.setOnClickListener(v -> navigateUp());
         
-        // Next button - navigate to appropriate activity based on flags
+        // Set click listener for the next button
         binding.btnNext.setOnClickListener(v -> {
-            if (imagePath == null) {
-                showToast("Image not available");
-                return;
-            }
-            
             if (isForTextRecognition) {
-                // For both text and handwriting, use TextRecognitionActivity
                 launchTextRecognition();
             } else if (isForQrScan) {
-                // For QR code scanning
+                // If current bitmap is not null, scan it for QR code
                 if (currentBitmap != null) {
                     scanQrCode(currentBitmap);
                 } else {
-                    showToast("Cannot process image");
+                    showToast("Failed to process image");
                 }
             } else {
-                // Handle normal flow
-                showToast("Image processed successfully");
                 navigateUp();
             }
         });

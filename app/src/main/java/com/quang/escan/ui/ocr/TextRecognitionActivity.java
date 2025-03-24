@@ -73,10 +73,14 @@ public class TextRecognitionActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         // Set title based on feature type
-        if (featureType == FEATURE_EXTRACT_HANDWRITING) {
-            getSupportActionBar().setTitle(R.string.ink_recognition_title);
-        } else {
-            getSupportActionBar().setTitle(R.string.text_recognition_title);
+        switch (featureType) {
+            case FEATURE_EXTRACT_HANDWRITING:
+                getSupportActionBar().setTitle(R.string.extract_handwriting);
+                break;
+            case FEATURE_EXTRACT_TEXT:
+            default:
+                getSupportActionBar().setTitle(R.string.extract_text);
+                break;
         }
         
         binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
