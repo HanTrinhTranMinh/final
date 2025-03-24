@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- App theme colors -->
+    <color name="primary">#4285F4</color>
+    <color name="primary_variant">#3367D6</color>
+    <color name="primary_light">#D2E3FC</color>
+    <color name="secondary">#7BAAF7</color>
+    <color name="secondary_variant">#5D96F5</color>
+    
+    <!-- Background colors -->
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#F5F7FA</color>
+    
+    <!-- Text colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_tertiary">#9E9E9E</color>
+    
+    <!-- Input field colors -->
+    <color name="input_background">#F5F7FA</color>
+    <color name="input_border">#E0E0E0</color>
+    
+    <!-- Action colors -->
+    <color name="success">#4CAF50</color>
+    <color name="error">#F44336</color>
+    <color name="warning">#FFC107</color>
+    <color name="info">#2196F3</color>
+    
+    <!-- Verification screen colors -->
+    <color name="verified_blue">#4285F4</color>
+    <color name="star_yellow">#FFDE03</color>
+    
+    <!-- Feature button colors -->
+    <color name="feature_button_bg">#FFF9F5</color>
+    
+    <!-- UI element colors -->
+    <color name="divider">#E0E0E0</color>
+
+    <color name="blue">#2196F3</color>  <!-- Nếu chưa có, hãy thêm vào -->
+
+</resources>

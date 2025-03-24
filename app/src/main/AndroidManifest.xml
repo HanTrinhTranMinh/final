@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Internet permission for Firebase -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Camera and storage permissions -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <application
+        android:name=".EScanApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:usesCleartextTraffic="true"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.EScan"
+        tools:targetApi="31">
+        <activity
+            android:name=".ui.home.TranslateActivity"
+            android:exported="false" />
+        <!-- File Provider for camera photos -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.quang.escan.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider> <!-- Sign In Activity - Launcher -->
+        <activity
+            android:name=".auth.SignInActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- Sign Up Activity -->
+        <activity
+            android:name=".auth.SignUpActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" /> <!-- Verification Activity -->
+        <activity
+            android:name=".auth.VerificationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" /> <!-- Text Recognition Activity -->
+        <activity
+            android:name=".ui.ocr.TextRecognitionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EScan" /> <!-- Save Extracted Text Activity -->
+        <activity
+            android:name=".ui.ocr.SaveExtractedTextActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EScan" /> <!-- QR Result Activity -->
+        <activity
+            android:name=".ui.qr.QrResultActivity"
+            android:exported="false"
+            android:theme="@style/Theme.EScan" /> <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>

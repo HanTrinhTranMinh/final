@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Card style for dark theme -->
+    <style name="Widget.EScan.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/surface</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">8dp</item>
+    </style>
+    
+    <!-- Button styles for dark theme -->
+    <style name="Widget.EScan.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:padding">12dp</item>
+    </style>
+    
+    <!-- Text field style for dark theme -->
+    <style name="Widget.EScan.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/secondary</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_tertiary</item>
+    </style>
+    
+    <!-- Dialog style for dark theme -->
+    <style name="ThemeOverlay.EScan.Dialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:background">@color/surface</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+    </style>
+    
+    <!-- Bottom navigation style for dark theme -->
+    <style name="Widget.EScan.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="backgroundTint">@color/surface</item>
+        <item name="itemIconTint">@color/primary</item>
+        <item name="itemTextColor">@color/text_primary</item>
+    </style>
+</resources> 

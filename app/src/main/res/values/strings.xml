@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EScan</string>
+
+    <!-- Common -->
+    <string name="home">Home</string>
+    <string name="scan">Scan</string>
+    <string name="library">Library</string>
+    <string name="settings">Settings</string>
+
+    <!-- Home Screen -->
+    <string name="recent_scans">Recent Scans</string>
+    <string name="quick_actions">Quick Actions</string>
+    <string name="scan_document">Scan Document</string>
+    <string name="import_image">Import Image</string>
+
+    <!-- Scan Screen -->
+    <string name="scan_document_title">Scan Document</string>
+    <string name="gallery">Gallery</string>
+    <string name="flash_on">Flash On</string>
+    <string name="flash_off">Flash Off</string>
+    <string name="capture">Capture</string>
+    <string name="change_mode">Change Mode</string>
+
+    <!-- Library Screen -->
+    <string name="all">All</string>
+    <string name="documents">Documents</string>
+    <string name="images">Images</string>
+    <string name="pdfs">PDFs</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="no_documents">No documents yet</string>
+
+    <!-- Settings Screen -->
+    <string name="account">Account</string>
+    <string name="app_settings">App Settings</string>
+    <string name="theme">Theme</string>
+    <string name="scan_quality">Scan Quality</string>
+    <string name="storage_location">Storage Location</string>
+    <string name="about">About</string>
+    <string name="about_escan">About EScan</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="version">Version</string>
+
+    <!-- Permissions -->
+    <string name="camera_permission_required">Camera permission required for scanning</string>
+    <string name="storage_permission_required">Storage permission required to save scans</string>
+
+    <!-- Authentication strings -->
+    <string name="sign_in_failed">Sign in failed</string>
+    <string name="sign_up_failed">Sign up failed</string>
+    <string name="email_required">Email is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="password_too_short">Password must be at least 6 characters</string>
+    <string name="password_mismatch">Passwords do not match</string>
+    <string name="email_already_in_use">This email is already registered</string>
+    <string name="account_created">Account created successfully</string>
+    <string name="verification_email_sent">Verification email sent</string>
+    <string name="reset_password_email_sent">Password reset email sent</string>
+
+    <!-- Navigation titles -->
+    <string name="title_home">Home</string>
+    <string name="title_scan">Scan</string>
+    <string name="title_library">Library</string>
+    <string name="title_settings">Settings</string>
+
+    <!-- Authentication -->
+    <string name="login_success">Login successful</string>
+    <string name="login_failed">Authentication failed</string>
+    <string name="registration_success">Account created successfully!</string>
+    <string name="email_verification_sent">Verification email sent to %s</string>
+    <string name="verification_success">Email verified successfully</string>
+    <string name="verification_failed">Email verification failed</string>
+
+    <!-- Error messages -->
+    <string name="weak_password">Password should be at least 6 characters</string>
+    <string name="invalid_email">Invalid email address format</string>
+    <string name="invalid_password">Invalid password</string>
+    <string name="email_not_verified">Please verify your email address first</string>
+    <string name="no_user_found">No user found with this email</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="network_error">Network error. Please check your connection.</string>
+    <string name="unknown_error">An unknown error occurred</string>
+    <string name="passwords_not_match">Passwords do not match</string>
+    <string name="empty_fields">Please fill in all fields</string>
+
+    <!-- OCR/Handwriting -->
+    <string name="extract_text">Extract Text</string>
+    <string name="extract_handwriting">Extract Handwriting</string>
+    <string name="processing_text">Processing text...</string>
+    <string name="processing_handwriting">Processing handwriting...</string>
+    <string name="ink_recognition_title">Handwriting Recognition</string>
+    <string name="save_extracted_ink">Save Extracted Handwriting</string>
+    <string name="ink_recognition_result">Handwriting Recognition Result</string>
+    <string name="no_handwriting_detected">No handwriting detected</string>
+    <string name="text_recognition_title">Text Recognition</string>
+    <string name="save_extracted_text">Save Extracted Text</string>
+    <string name="no_text_detected">No text detected</string>
+</resources>

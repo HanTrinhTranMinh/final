@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "798986262916",
+    "project_id": "escanltm",
+    "storage_bucket": "escanltm.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798986262916:android:234a8c8698df6594dd65d1",
+        "android_client_info": {
+          "package_name": "com.quang.escan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "798986262916-example12345.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quang.escan",
+            "certificate_hash": "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t"
+          }
+        },
+        {
+          "client_id": "798986262916-webexample67890.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1SDW6wtCTNlrBvcPWXDsBmHSAspqaDO4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "798986262916-webexample67890.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

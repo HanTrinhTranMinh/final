@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.watermark.WatermarkFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/surface"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Add Watermark"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Image Preview -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_image_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/image_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Image Preview"
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Watermark Text Input -->
+            <TextView
+                android:id="@+id/text_watermark_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Watermark Text"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_image_preview" />
+
+            <EditText
+                android:id="@+id/edit_watermark_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edit_text_background"
+                android:hint="Enter watermark text"
+                android:padding="12dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_tertiary"
+                app:layout_constraintTop_toBottomOf="@id/text_watermark_label" />
+
+            <!-- Watermark Style Selection -->
+            <TextView
+                android:id="@+id/text_style_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Watermark Style"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_watermark_text" />
+
+            <RadioGroup
+                android:id="@+id/radio_group_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/text_style_label">
+
+                <RadioButton
+                    android:id="@+id/radio_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Horizontal (Bottom)"
+                    android:textColor="@color/text_primary" />
+
+                <RadioButton
+                    android:id="@+id/radio_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vertical (Right)"
+                    android:textColor="@color/text_primary" />
+
+                <RadioButton
+                    android:id="@+id/radio_diagonal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Diagonal (Center)"
+                    android:textColor="@color/text_primary" />
+
+                <RadioButton
+                    android:id="@+id/radio_tiled"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tiled (Pattern)"
+                    android:textColor="@color/text_primary" />
+
+            </RadioGroup>
+
+            <!-- Color Selection -->
+            <TextView
+                android:id="@+id/text_color_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Watermark Color"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/radio_group_style" />
+
+            <LinearLayout
+                android:id="@+id/color_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/text_color_label">
+
+                <Button
+                    android:id="@+id/btn_color_white"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="#FFFFFF"
+                    android:text=""
+                    app:strokeColor="@color/text_tertiary"
+                    app:strokeWidth="1dp" />
+
+                <Button
+                    android:id="@+id/btn_color_black"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="#000000"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/btn_color_red"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="#FF0000"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/btn_color_blue"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="#0000FF"
+                    android:text="" />
+
+                <Button
+                    android:id="@+id/btn_color_green"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="#00FF00"
+                    android:text="" />
+
+            </LinearLayout>
+
+            <!-- Transparency Slider -->
+            <TextView
+                android:id="@+id/text_transparency_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Transparency"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/color_options" />
+
+            <SeekBar
+                android:id="@+id/seek_transparency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:max="255"
+                android:progress="150"
+                app:layout_constraintTop_toBottomOf="@id/text_transparency_label" />
+
+            <!-- Action Buttons -->
+            <Button
+                android:id="@+id/btn_apply"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/primary_button_background"
+                android:text="Apply Watermark"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toStartOf="@id/btn_save"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/seek_transparency" />
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/primary_button_background"
+                android:text="Save"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btn_apply"
+                app:layout_constraintTop_toBottomOf="@id/seek_transparency" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout> 

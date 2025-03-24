@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- App theme colors - keeping brand colors but slightly darker -->
+    <color name="primary">#FF6F42</color>
+    <color name="primary_variant">#D05028</color>
+    <color name="secondary">#4A69C7</color>
+    <color name="secondary_variant">#3A58B0</color>
+    
+    <!-- Background colors - dark theme -->
+    <color name="background">#121212</color>
+    <color name="surface">#1E1E1E</color>
+    
+    <!-- Text colors - light for dark background -->
+    <color name="text_primary">#E0E0E0</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="text_tertiary">#909090</color>
+    
+    <!-- Action colors - slightly muted for dark theme -->
+    <color name="success">#3DA142</color>
+    <color name="error">#E53935</color>
+    <color name="warning">#FBC02D</color>
+    <color name="info">#1E88E5</color>
+</resources> 
