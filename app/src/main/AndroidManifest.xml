@@ -7,6 +7,7 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
@@ -21,14 +22,19 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.EScan"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ui.home.TranslateActivity"
+            android:name=".ui.settings.Dashboard"
             android:exported="false" />
-        <!-- File Provider for camera photos -->
+        <activity
+            android:name=".ui.settings.About"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.TranslateActivity"
+            android:exported="false" /> <!-- File Provider for camera photos -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.quang.escan.fileprovider"

@@ -1,6 +1,8 @@
 package com.quang.escan;
 
+
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.mlkit.common.model.DownloadConditions;
+import com.google.mlkit.nl.translate.Translation;
+import com.google.mlkit.nl.translate.Translator;
+import com.google.mlkit.nl.translate.TranslatorOptions;
 import com.quang.escan.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
     private NavController navController;
-    
+
+    private Translator translator;
     private static final int REQUEST_CODE_PERMISSIONS = 101;
     private static final String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.CAMERA,
@@ -37,15 +44,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        
+
         // Request permissions
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
-        
+
         setupNavigation();
+
+        // Tải trước mô hình
+        preloadTranslationModel();
     }
-    
+
     /**
      * Sets up the bottom navigation with the Navigation Component.
      * Uses the recommended approach from the Android Jetpack documentation.
@@ -53,34 +63,34 @@ public class MainActivity extends AppCompatActivity {
     private void setupNavigation() {
         try {
             Log.d(TAG, "Setting up navigation");
-            
+
             // Get NavHostFragment and NavController
             NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.nav_host_fragment);
-            
+
             if (navHostFragment == null) {
                 Log.e(TAG, "NavHostFragment not found");
                 return;
             }
-            
+
             navController = navHostFragment.getNavController();
             BottomNavigationView bottomNav = binding.bottomNavView;
-            
+
             if (bottomNav == null) {
                 Log.e(TAG, "BottomNavigationView not found");
                 return;
             }
-            
+
             // Connect the bottom navigation view with the navigation controller
             NavigationUI.setupWithNavController(bottomNav, navController);
-            
+
             // Define top-level destinations
             AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, 
-                R.id.navigation_library, 
+                R.id.navigation_home,
+                R.id.navigation_library,
                 R.id.navigation_settings
             ).build();
-            
+
             // Add destination change listener for logging
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
                 Log.d(TAG, "Navigated to: " + destination.getLabel());
@@ -90,7 +100,34 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Error setting up navigation", Toast.LENGTH_SHORT).show();
         }
     }
-    
+
+    private void preloadTranslationModel() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading translation model...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        TranslatorOptions options = new TranslatorOptions.Builder()
+                .setSourceLanguage("en")
+                .setTargetLanguage("vi")
+                .build();
+        translator = Translation.getClient(options);
+
+        DownloadConditions conditions = new DownloadConditions.Builder()
+                .requireWifi()
+                .build();
+
+        translator.downloadModelIfNeeded(conditions)
+                .addOnSuccessListener(unused -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(this, "Translation model loaded!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(this, "Failed to load model: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
     /**
      * Checks if all required permissions are granted
      */
@@ -102,12 +139,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-    
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, 
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        
+
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             boolean allGranted = true;
             for (int result : grantResults) {
@@ -116,14 +153,14 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
-            
+
             if (!allGranted) {
-                Toast.makeText(this, "Permissions required for app functionality", 
+                Toast.makeText(this, "Permissions required for app functionality",
                         Toast.LENGTH_LONG).show();
             }
         }
     }
-    
+
     @Override
     public boolean onSupportNavigateUp() {
         return navController.navigateUp() || super.onSupportNavigateUp();

@@ -84,15 +84,31 @@
                     app:layout_constraintBottom_toBottomOf="@id/label_language" />
 
                 <!-- Recognition Button -->
-                <Button
-                    android:id="@+id/btn_recognize"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/primary_button_background"
-                    android:text="Recognize Text"
-                    android:textColor="@color/white"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_language" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner_language">
+
+                    <Button
+                        android:id="@+id/btn_recognize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/primary_button_background"
+                        android:text="Recognize Text"
+                        android:textColor="@color/white"
+                        android:layout_marginRight="10dp"/>
+
+                    <Button
+                        android:id="@+id/btn_translate"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/ic_translate"
+                        android:textColor="@color/material_dynamic_neutral60" />
+
+
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

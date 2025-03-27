@@ -10,7 +10,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="@color/surface"
         android:elevation="4dp"
         app:layout_constraintTop_toTopOf="parent">
@@ -30,34 +30,31 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Image Preview -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_image_preview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="2dp"
-                app:layout_constraintTop_toTopOf="parent">
+                app:cardElevation="2dp">
 
                 <ImageView
                     android:id="@+id/image_preview"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:adjustViewBounds="true"
-                    android:contentDescription="Image Preview"
-                    android:scaleType="centerCrop" />
-
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Image Preview" />
             </androidx.cardview.widget.CardView>
 
-            <!-- Watermark Text Input -->
             <TextView
                 android:id="@+id/text_watermark_label"
                 android:layout_width="wrap_content"
@@ -65,9 +62,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Watermark Text"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_image_preview" />
+                android:textSize="16sp" />
 
             <EditText
                 android:id="@+id/edit_watermark_text"
@@ -78,10 +73,8 @@
                 android:hint="Enter watermark text"
                 android:padding="12dp"
                 android:textColor="@color/text_primary"
-                android:textColorHint="@color/text_tertiary"
-                app:layout_constraintTop_toBottomOf="@id/text_watermark_label" />
+                android:textColorHint="@color/text_tertiary" />
 
-            <!-- Watermark Style Selection -->
             <TextView
                 android:id="@+id/text_style_label"
                 android:layout_width="wrap_content"
@@ -89,32 +82,14 @@
                 android:layout_marginTop="24dp"
                 android:text="Watermark Style"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/edit_watermark_text" />
+                android:textSize="16sp" />
 
             <RadioGroup
                 android:id="@+id/radio_group_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/text_style_label">
-
-                <RadioButton
-                    android:id="@+id/radio_horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Horizontal (Bottom)"
-                    android:textColor="@color/text_primary" />
-
-                <RadioButton
-                    android:id="@+id/radio_vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Vertical (Right)"
-                    android:textColor="@color/text_primary" />
+                android:orientation="vertical">
 
                 <RadioButton
                     android:id="@+id/radio_diagonal"
@@ -129,10 +104,8 @@
                     android:layout_height="wrap_content"
                     android:text="Tiled (Pattern)"
                     android:textColor="@color/text_primary" />
-
             </RadioGroup>
 
-            <!-- Color Selection -->
             <TextView
                 android:id="@+id/text_color_label"
                 android:layout_width="wrap_content"
@@ -140,34 +113,29 @@
                 android:layout_marginTop="24dp"
                 android:text="Watermark Color"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/radio_group_style" />
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:id="@+id/color_options"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/text_color_label">
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btn_color_white"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
-                    android:background="#FFFFFF"
-                    android:text=""
-                    app:strokeColor="@color/text_tertiary"
-                    app:strokeWidth="1dp" />
+                    android:backgroundTint="#FFFFFF"
+                    android:text="" />
 
                 <Button
                     android:id="@+id/btn_color_black"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
-                    android:background="#000000"
+                    android:backgroundTint="#000000"
                     android:text="" />
 
                 <Button
@@ -175,7 +143,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
-                    android:background="#FF0000"
+                    android:backgroundTint="#FF0000"
                     android:text="" />
 
                 <Button
@@ -183,19 +151,17 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
-                    android:background="#0000FF"
+                    android:backgroundTint="#0000FF"
                     android:text="" />
 
                 <Button
                     android:id="@+id/btn_color_green"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="#00FF00"
+                    android:backgroundTint="#00FF00"
                     android:text="" />
-
             </LinearLayout>
 
-            <!-- Transparency Slider -->
             <TextView
                 android:id="@+id/text_transparency_label"
                 android:layout_width="wrap_content"
@@ -203,9 +169,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Transparency"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_options" />
+                android:textSize="16sp" />
 
             <SeekBar
                 android:id="@+id/seek_transparency"
@@ -213,36 +177,94 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:max="255"
-                android:progress="150"
-                app:layout_constraintTop_toBottomOf="@id/text_transparency_label" />
+                android:progress="150" />
 
-            <!-- Action Buttons -->
-            <Button
-                android:id="@+id/btn_apply"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/primary_button_background"
-                android:text="Apply Watermark"
-                android:textColor="@color/white"
-                app:layout_constraintEnd_toStartOf="@id/btn_save"
+            <TextView
+                android:id="@+id/text_blur_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Blur Effect"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp" />
+
+            <SeekBar
+                android:id="@+id/seek_blur"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:max="20"
+                android:progress="0" />
+
+            <TextView
+                android:id="@+id/text_size_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Size"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp" />
+
+            <SeekBar
+                android:id="@+id/seek_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:max="100"
+                android:progress="20" />
+
+
+
+            <!-- Font Style Selection -->
+            <TextView
+                android:id="@+id/text_font_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Font Style"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/seek_transparency" />
+                app:layout_constraintTop_toBottomOf="@id/color_options" />
 
-            <Button
-                android:id="@+id/btn_save"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
-                android:background="@drawable/primary_button_background"
-                android:text="Save"
-                android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/btn_apply"
-                app:layout_constraintTop_toBottomOf="@id/seek_transparency" />
+            <Spinner
+                android:id="@+id/spinner_font_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edit_text_background"
+                android:padding="10dp"
+                app:layout_constraintTop_toBottomOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="32dp">
+
+                <Button
+                    android:id="@+id/btn_apply"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/primary_button_background"
+                    android:text="Apply Watermark"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/btn_save"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/primary_button_background"
+                    android:text="Save"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+        </LinearLayout>
     </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout> 
+
+</androidx.constraintlayout.widget.ConstraintLayout>

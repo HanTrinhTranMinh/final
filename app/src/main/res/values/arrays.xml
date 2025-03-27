@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="font_families">
+        <item>Default</item>
+        <item>Serif</item>
+        <item>Sans-Serif</item>
+        <item>Monospace</item>
+        <item>Cursive</item>
+    </array>
+</resources>

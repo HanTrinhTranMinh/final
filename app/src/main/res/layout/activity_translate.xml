@@ -26,8 +26,9 @@
     <!-- Nút dịch -->
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         android:layout_marginTop="22dp"
         android:overScrollMode="never"
@@ -36,9 +37,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:elevation="4dp"
             android:orientation="vertical"
-            android:layout_marginBottom="10dp"
             android:padding="10dp">
 
             <!-- Chọn ngôn ngữ -->
@@ -57,16 +58,17 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="12dp"
-                    android:text="English"
+                    android:text="Tiếng Anh"
                     android:textAllCaps="false"
                     app:cornerRadius="20dp"
                     app:strokeColor="@color/primary" />
 
-                <ImageView
+                <ImageButton
+                    android:id="@+id/convertLanguage"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginHorizontal="8dp"
-                    android:src="@drawable/ic_chevron_right" />
+                    android:background="@drawable/baseline_change_circle_24" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/destinationLanguageChooseBtn"
@@ -75,7 +77,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="12dp"
-                    android:text="Vietnamese"
+                    android:text="Tiếng Việt"
                     android:textAllCaps="false"
                     app:cornerRadius="20dp"
                     app:strokeColor="@color/primary" />
@@ -103,7 +105,8 @@
                     android:gravity="start|top"
                     android:hint="Type something..."
                     android:padding="16dp"
-                    android:textSize="20sp" />
+                    android:textColorHint="@null"
+                    android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -114,21 +117,48 @@
                 android:hint="Translation will appear here"
                 android:padding="16dp"
                 android:textColor="@android:color/black"
-                android:textSize="20sp" />
+                android:textSize="16sp" />
+
         </LinearLayout>
     </ScrollView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/translateBtn"
-        style="@style/Widget.MaterialComponents.Button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:elevation="6dp"
+        android:orientation="horizontal"
         android:padding="16dp"
-        android:text="Translate"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        app:cornerRadius="20dp" />
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/translateBtn"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:elevation="6dp"
+            android:padding="16dp"
+            android:text="Translate"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:cornerRadius="10dp" />
+
+        <Button
+            android:id="@+id/btnCopy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Copy"
+            android:layout_marginStart="8dp" />
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Share"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

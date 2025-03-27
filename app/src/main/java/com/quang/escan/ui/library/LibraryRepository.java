@@ -195,6 +195,13 @@ public class LibraryRepository {
 
         return document;
     }
+    /**Thêm phương thức để xóa **/
+    public void clearAllDocuments() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_DOCUMENTS); // Xóa toàn bộ dữ liệu trong bảng documents
+        db.close();
+        Log.d(TAG, "All documents cleared from database");
+    }
 
     /**
      * Database helper class

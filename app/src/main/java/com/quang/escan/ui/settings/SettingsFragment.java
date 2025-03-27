@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.quang.escan.R;
 import com.quang.escan.databinding.FragmentSettingsBinding;
+import com.quang.escan.ui.library.LibraryRepository;
 import com.quang.escan.utils.ThemeUtils;
 
 /**
@@ -129,29 +130,31 @@ public class SettingsFragment extends Fragment {
         
         // Theme setting
         binding.themeSetting.setOnClickListener(v -> {
-            Log.d(TAG, "Theme setting clicked");
             showThemeSelectionDialog();
         });
         
         
         // Storage setting
         binding.storageSetting.setOnClickListener(v -> {
-            Log.d(TAG, "Storage setting clicked");
-            Toast.makeText(requireContext(), "Storage setting clicked", Toast.LENGTH_SHORT).show();
-            // Future: Show storage location selection dialog
+            showClearDatabaseConfirmationDialog();
         });
         
         // About
         binding.aboutSetting.setOnClickListener(v -> {
-            Log.d(TAG, "About clicked");
-            Toast.makeText(requireContext(), "About clicked", Toast.LENGTH_SHORT).show();
-
+            Intent intent = new Intent(requireContext(), About.class);
+            startActivity(intent);
         });
         
         // Sign out
         binding.signOutButton.setOnClickListener(v -> {
             Log.d(TAG, "Sign out clicked");
             showSignOutConfirmationDialog();
+        });
+
+        //Dashboard
+        binding.dashboardSetting.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), Dashboard.class);
+            startActivity(intent);
         });
     }
     
@@ -226,6 +229,34 @@ public class SettingsFragment extends Fragment {
                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         
         builder.create().show();
+    }
+
+    //Xóa data
+    private void showClearDatabaseConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Clear Documents Database")
+                .setMessage("This will delete all saved documents in the database. This action cannot be undone. Are you sure?")
+                .setPositiveButton("Clear", (dialog, which) -> {
+                    clearDocumentsDatabase();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    /**
+     * Clear all data in the documents database
+     */
+    private void clearDocumentsDatabase() {
+        try {
+            LibraryRepository libraryRepository = new LibraryRepository(requireContext());
+            libraryRepository.clearAllDocuments(); // Gọi phương thức xóa dữ liệu
+
+            Toast.makeText(requireContext(), "Documents database cleared successfully", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Documents database cleared");
+        } catch (Exception e) {
+            Log.e(TAG, "Error clearing documents database: " + e.getMessage());
+            Toast.makeText(requireContext(), "Error clearing documents database", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

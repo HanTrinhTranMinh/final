@@ -85,4 +85,8 @@ dependencies {
 
     //thư viên translate
     implementation ("com.google.mlkit:translate:17.0.0")
+    implementation ("com.google.mlkit:language-id:16.1.1")
+
+    //thư viện sơ đồ
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

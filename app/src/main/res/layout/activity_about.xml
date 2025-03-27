@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".ui.settings.About">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/surface"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"> <!-- Icon nút quay lại -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="About Escan"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- ScrollView để chứa nội dung -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Logo hoặc Icon ứng dụng (có animation) -->
+            <ImageView
+                android:id="@+id/app_logo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:animation="@anim/rotate_animation"
+                android:contentDescription="Escan Logo"
+                android:src="@drawable/ic_logo_proscan" />
+
+            <!-- Tiêu đề ứng dụng -->
+            <TextView
+                android:id="@+id/app_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:text="Escan"
+                android:textColor="@color/text_primary"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:animation="@anim/fade_in" />
+
+            <!-- Mô tả ứng dụng -->
+            <TextView
+                android:id="@+id/app_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Escan là một ứng dụng đa năng được phát triển để hỗ trợ người dùng trong việc xử lý hình ảnh và văn bản. Đây là đồ án cuối kỳ năm 2 của 3 sinh viên HUFLIT, nhằm mang đến một công cụ tiện ích với các tính năng hiện đại."
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                android:animation="@anim/slide_in_left" />
+
+            <!-- Chức năng chính -->
+            <TextView
+                android:id="@+id/features_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Chức năng chính"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:animation="@anim/fade_in" />
+
+            <TextView
+                android:id="@+id/features_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="- Extract Text: Trích xuất văn bản từ hình ảnh.\n- Extract Ink: Tách mực để làm rõ nội dung.\n- Watermark: Thêm watermark tùy chỉnh lên ảnh.\n- Translate: Dịch văn bản sang nhiều ngôn ngữ.\n- QR Code: Quét và tạo mã QR nhanh chóng."
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                android:animation="@anim/slide_in_left" />
+
+            <!-- Thông tin nhóm phát triển -->
+            <TextView
+                android:id="@+id/team_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Nhóm phát triển"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:animation="@anim/fade_in" />
+
+            <TextView
+                android:id="@+id/team_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Đồ án được thực hiện bởi 3 sinh viên năm 2 Trường Đại học Ngoại ngữ - Tin học TP.HCM (HUFLIT):\n- Sinh viên 1\n- Sinh viên 2\n- Sinh viên 3"
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                android:animation="@anim/slide_in_left" />
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
