@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import com.quang.escan.ui.settings.Dashboard; // Thêm import
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -231,6 +232,7 @@ public class TranslateActivity extends AppCompatActivity {
                 .addOnSuccessListener(translatedText -> {
                     Log.d(TAG, "Translated text: " + translatedText);
                     progressDialog.dismiss();
+                    Dashboard.incrementTranslateCount(this);
                     destinationLanguageTv.setText(translatedText);
                 })
                 .addOnFailureListener(e -> {

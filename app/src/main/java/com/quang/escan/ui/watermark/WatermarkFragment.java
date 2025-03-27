@@ -2,6 +2,7 @@ package com.quang.escan.ui.watermark;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import com.quang.escan.ui.settings.Dashboard; // Thêm import
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -163,7 +164,6 @@ public class WatermarkFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 seek_transparency = progress;
-                showToast("Transparency: " + progress + "/255");
                 applyWatermarkIfTextExists();
             }
 
@@ -179,7 +179,6 @@ public class WatermarkFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 blurRadius = progress;
-                showToast("Blur Radius: " + progress + "/20");
                 applyWatermarkIfTextExists();
             }
 
@@ -195,7 +194,6 @@ public class WatermarkFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textSize = 20f + (progress * 4f); // Minimum 20px, maximum 100px
-                showToast("Text Size: " + String.format("%.0f", textSize) + "px");
                 applyWatermarkIfTextExists();
             }
 
@@ -297,6 +295,7 @@ public class WatermarkFragment extends Fragment {
             }
 
             if (watermarkedBitmap != null) {
+
                 binding.imagePreview.setImageBitmap(watermarkedBitmap);
                 binding.btnSave.setEnabled(true);
             } else {
@@ -342,6 +341,8 @@ public class WatermarkFragment extends Fragment {
                 }
             }
 
+            // Tăng đếm khi lưu thành công
+            Dashboard.incrementWatermarkCount(requireContext());
             showToast("Image saved: " + outputFile.getAbsolutePath());
             navigateUp();
 

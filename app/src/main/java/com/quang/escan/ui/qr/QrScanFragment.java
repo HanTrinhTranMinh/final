@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import com.quang.escan.ui.settings.Dashboard;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -244,6 +245,9 @@ public class QrScanFragment extends Fragment {
     private void launchQrResultActivity(String qrValue) {
         try {
             if (getActivity() != null) {
+                // Tăng đếm số lần quét QR
+                Dashboard.incrementScanCount(requireContext());
+
                 Intent intent = new Intent(requireContext(), QrResultActivity.class);
                 intent.putExtra(QrResultActivity.EXTRA_QR_VALUE, qrValue);
                 startActivity(intent);
@@ -476,4 +480,6 @@ public class QrScanFragment extends Fragment {
             Navigation.findNavController(requireView()).navigateUp();
         }
     }
+
+
 }

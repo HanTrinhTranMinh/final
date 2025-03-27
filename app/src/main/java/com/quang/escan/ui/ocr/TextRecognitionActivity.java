@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.quang.escan.ui.settings.Dashboard; // Thêm import
 
 import com.quang.escan.R;
 import com.quang.escan.databinding.ActivityTextRecognitionBinding;
@@ -281,6 +282,9 @@ public class TextRecognitionActivity extends AppCompatActivity
                 binding.txtRecognizedText.setText("No text found in image");
                 Toast.makeText(this, "No text was recognized", Toast.LENGTH_SHORT).show();
             } else {
+
+                // Tăng đếm số lần quét văn bản
+                Dashboard.incrementScanCount(this);
                 binding.txtRecognizedText.setText(text);
                 binding.btnCopy.setEnabled(true);
                 binding.btnShare.setEnabled(true);

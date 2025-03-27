@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private NavController navController;
 
-    private Translator translator;
+
     private static final int REQUEST_CODE_PERMISSIONS = 101;
     private static final String[] REQUIRED_PERMISSIONS = {
             Manifest.permission.CAMERA,
@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupNavigation();
 
-        // Tải trước mô hình
-        preloadTranslationModel();
+
     }
 
     /**
@@ -101,32 +100,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void preloadTranslationModel() {
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading translation model...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-        TranslatorOptions options = new TranslatorOptions.Builder()
-                .setSourceLanguage("en")
-                .setTargetLanguage("vi")
-                .build();
-        translator = Translation.getClient(options);
-
-        DownloadConditions conditions = new DownloadConditions.Builder()
-                .requireWifi()
-                .build();
-
-        translator.downloadModelIfNeeded(conditions)
-                .addOnSuccessListener(unused -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(this, "Translation model loaded!", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(this, "Failed to load model: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                });
-    }
 
     /**
      * Checks if all required permissions are granted
