@@ -13,10 +13,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import com.quang.escan.ui.settings.Dashboard; // Thêm import
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +30,7 @@ import com.google.mlkit.nl.translate.TranslatorOptions;
 import com.google.mlkit.nl.languageid.LanguageIdentification;
 import com.google.mlkit.nl.languageid.LanguageIdentifier;
 import com.quang.escan.R;
+import com.quang.escan.ui.settings.Dashboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,10 +134,24 @@ public class TranslateActivity extends AppCompatActivity {
                 Toast.makeText(this, "No text to share!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Tải trước mô hình phổ biến (ví dụ: ja -> vi)
+        preloadTranslationModel("ja", "vi");
+    }
+
+    private void preloadTranslationModel(String sourceLang, String targetLang) {
+        TranslatorOptions options = new TranslatorOptions.Builder()
+                .setSourceLanguage(sourceLang)
+                .setTargetLanguage(targetLang)
+                .build();
+        Translator preloadedTranslator = Translation.getClient(options);
+        DownloadConditions conditions = new DownloadConditions.Builder().build();
+        preloadedTranslator.downloadModelIfNeeded(conditions)
+                .addOnSuccessListener(unused -> Log.d(TAG, "Preloaded model " + sourceLang + " -> " + targetLang + " successfully"))
+                .addOnFailureListener(e -> Log.e(TAG, "Failed to preload model " + sourceLang + " -> " + targetLang + ": " + e.getMessage()));
     }
 
     private void swapLanguages() {
-        // Hoán đổi mã ngôn ngữ và tiêu đề
         String tempCode = sourceLanguageCode;
         String tempTitle = sourceLanguageTitle;
         sourceLanguageCode = destinationLanguageCode;
@@ -146,11 +159,9 @@ public class TranslateActivity extends AppCompatActivity {
         destinationLanguageCode = tempCode;
         destinationLanguageTitle = tempTitle;
 
-        // Cập nhật giao diện
         sourceLanguageChooseBtn.setText(sourceLanguageTitle);
         destinationLanguageChooseBtn.setText(destinationLanguageTitle);
 
-        // Hoán đổi văn bản nếu có
         String sourceText = sourceLanguageEt.getText().toString().trim();
         String destText = destinationLanguageTv.getText().toString().trim();
         if (!sourceText.isEmpty() || !destText.isEmpty()) {
@@ -158,7 +169,6 @@ public class TranslateActivity extends AppCompatActivity {
             destinationLanguageTv.setText(sourceText);
         }
 
-        // Tự động dịch lại nếu có văn bản trong sourceLanguageEt
         if (!sourceText.isEmpty() && !sourceLanguageCode.equals("und")) {
             startTranslation(destText.isEmpty() ? sourceText : destText);
         }
@@ -166,7 +176,8 @@ public class TranslateActivity extends AppCompatActivity {
 
     private void detectLanguageAndTranslate(String text) {
         if (!isNetworkAvailable()) {
-            Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No internet connection. Please connect to download translation model.", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
             return;
         }
 
@@ -212,17 +223,23 @@ public class TranslateActivity extends AppCompatActivity {
                 .build();
         translator = Translation.getClient(options);
 
-        DownloadConditions conditions = new DownloadConditions.Builder().build();
+        if (!isNetworkAvailable()) {
+            Toast.makeText(this, "No internet connection. Please connect to download translation model.", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+            return;
+        }
+
         progressDialog.setMessage("Preparing translation model...");
+        DownloadConditions conditions = new DownloadConditions.Builder().build();
         translator.downloadModelIfNeeded(conditions)
                 .addOnSuccessListener(unused -> {
-                    Log.d(TAG, "Model is ready for translation.");
+                    Log.d(TAG, "Model downloaded or already available.");
                     translateText(sourceText);
                 })
                 .addOnFailureListener(e -> {
                     progressDialog.dismiss();
                     Log.e(TAG, "Model download failed: " + e.getMessage());
-                    Toast.makeText(this, "Failed to prepare translation model: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Failed to download translation model: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -233,6 +250,7 @@ public class TranslateActivity extends AppCompatActivity {
                     Log.d(TAG, "Translated text: " + translatedText);
                     progressDialog.dismiss();
                     Dashboard.incrementTranslateCount(this);
+                    Log.d(TAG, "Translate count incremented");
                     destinationLanguageTv.setText(translatedText);
                 })
                 .addOnFailureListener(e -> {

@@ -251,6 +251,8 @@ public class SettingsFragment extends Fragment {
             LibraryRepository libraryRepository = new LibraryRepository(requireContext());
             libraryRepository.clearAllDocuments(); // Gọi phương thức xóa dữ liệu
 
+            // Reset số liệu Dashboard
+            Dashboard.resetStatistics(requireContext());
             Toast.makeText(requireContext(), "Documents database cleared successfully", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Documents database cleared");
         } catch (Exception e) {

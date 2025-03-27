@@ -7,6 +7,10 @@ android {
     namespace = "com.quang.escan"
     compileSdk = 35
 
+    aaptOptions {
+        noCompress += "tflite"
+    }
+
     defaultConfig {
         applicationId = "com.quang.escan"
         minSdk = 33
@@ -39,6 +43,8 @@ android {
     lint {
         abortOnError = false
     }
+
+
 }
 
 dependencies {
@@ -84,7 +90,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     //thư viên translate
-    implementation ("com.google.mlkit:translate:17.0.0")
+    implementation ("com.google.mlkit:translate:17.0.2")
     implementation ("com.google.mlkit:language-id:16.1.1")
 
     //thư viện sơ đồ

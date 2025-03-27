@@ -26,6 +26,10 @@
         android:theme="@style/Theme.EScan"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.mlkit.translate.MODEL_BUNDLES"
+            android:value="en,zh,ko,ja,hi,vi" />
         <activity
             android:name=".ui.settings.Dashboard"
             android:exported="false" />

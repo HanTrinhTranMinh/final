@@ -1,5 +1,6 @@
 package com.quang.escan.ui.settings;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.quang.escan.R;
+import com.quang.escan.ui.library.LibraryRepository;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +31,6 @@ public class Dashboard extends AppCompatActivity {
 
     // Khai báo các biến TextView với tên đúng theo chuẩn camelCase
     private TextView UploadedFilesCount; // Sửa tên biến để nhất quán
-    private TextView ScannedImagesCount;
     private TextView TotalUsageCount;
     private BarChart UsageChart;
 
@@ -46,7 +47,6 @@ public class Dashboard extends AppCompatActivity {
 
         // Khởi tạo các view với ID từ XML
         UploadedFilesCount = findViewById(R.id.uploaded);
-        ScannedImagesCount = findViewById(R.id.scanned);
         TotalUsageCount = findViewById(R.id.total);
         UsageChart = findViewById(R.id.usage);
 
@@ -83,8 +83,12 @@ public class Dashboard extends AppCompatActivity {
         int totalUsage = scanCount + watermarkCount + translateCount;
 
         // Update UI với tên biến đúng
-        UploadedFilesCount.setText(String.valueOf(fileCount));
-        ScannedImagesCount.setText(String.valueOf(imageCount));
+        // Tính tổng số file đã lưu (giả định từ LibraryRepository)
+        LibraryRepository libraryRepository = new LibraryRepository(this);
+        int totalSavedFiles = libraryRepository.getTotalSavedFiles(); // Phương thức mới cần thêm
+
+        // Cập nhật TextView với tổng số file
+        UploadedFilesCount.setText(String.valueOf(totalSavedFiles));
         TotalUsageCount.setText(String.valueOf(totalUsage));
 
         // Setup BarChart
@@ -152,6 +156,14 @@ public class Dashboard extends AppCompatActivity {
         Log.d(TAG, "BarChart setup: Scan=" + scanCount + ", Watermark=" + watermarkCount + ", Translate=" + translateCount);
     }
 
+    public static void resetStatistics(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(KEY_SCAN_COUNT, 0);
+        editor.putInt(KEY_WATERMARK_COUNT, 0);
+        editor.putInt(KEY_TRANSLATE_COUNT, 0);
+        editor.apply();
+    }
     // Static methods to increment counts
     public static void incrementScanCount(android.content.Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);

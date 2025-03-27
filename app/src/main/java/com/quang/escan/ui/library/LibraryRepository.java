@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.quang.escan.model.ExtractedDocument;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,8 +36,10 @@ public class LibraryRepository {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     private final DatabaseHelper dbHelper;
+    private final Context context; // Thêm biến instance context
 
     public LibraryRepository(Context context) {
+        this.context = context; // Lưu context từ constructor
         dbHelper = new DatabaseHelper(context);
     }
 
@@ -59,7 +62,7 @@ public class LibraryRepository {
         Log.d(TAG, "Document saved with ID: " + id);
         return id;
     }
-    
+
     /**
      * Update an existing document in the database
      * @param document The document to update
@@ -73,12 +76,10 @@ public class LibraryRepository {
         values.put(COLUMN_CATEGORY, document.getCategory());
         values.put(COLUMN_EXTRACTED_TEXT, document.getExtractedText());
         values.put(COLUMN_IMAGE_PATH, document.getImagePath());
-        
-        // Don't update creation date - it should remain as is
 
         String whereClause = COLUMN_ID + " = ?";
         String[] whereArgs = {String.valueOf(document.getId())};
-        
+
         int rowsAffected = db.update(TABLE_DOCUMENTS, values, whereClause, whereArgs);
         Log.d(TAG, "Document updated, rows affected: " + rowsAffected);
         return rowsAffected;
@@ -91,10 +92,10 @@ public class LibraryRepository {
      */
     public ExtractedDocument getDocumentById(long documentId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
+
         String selection = COLUMN_ID + " = ?";
         String[] selectionArgs = {String.valueOf(documentId)};
-        
+
         try (Cursor cursor = db.query(
                 TABLE_DOCUMENTS,
                 null,
@@ -103,12 +104,12 @@ public class LibraryRepository {
                 null,
                 null,
                 null)) {
-            
+
             if (cursor != null && cursor.moveToFirst()) {
                 return cursorToDocument(cursor);
             }
         }
-        
+
         return null;
     }
 
@@ -195,12 +196,62 @@ public class LibraryRepository {
 
         return document;
     }
-    /**Thêm phương thức để xóa **/
+
+    /**
+     * Clear all documents from the database
+     */
     public void clearAllDocuments() {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_DOCUMENTS); // Xóa toàn bộ dữ liệu trong bảng documents
         db.close();
         Log.d(TAG, "All documents cleared from database");
+
+        // Xóa các file vật lý trong thư mục lưu trữ
+        File imagesDir = new File(context.getExternalFilesDir(null), "EScan/Images");
+        File filesDir = new File(context.getExternalFilesDir(null), "EScan/Files");
+        deleteDirectory(imagesDir);
+        deleteDirectory(filesDir);
+    }
+
+    private void deleteDirectory(File dir) {
+        if (dir.exists() && dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
+                    } else {
+                        file.delete();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get total number of saved files (documents and images)
+     * @return Total number of saved files
+     */
+    public int getTotalSavedFiles() {
+        // Đếm số tài liệu trong database
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        int documentCount;
+        try (Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_DOCUMENTS, null)) {
+            cursor.moveToFirst();
+            documentCount = cursor.getInt(0);
+        }
+
+        // Đếm số file trong thư mục lưu trữ
+        File imagesDir = new File(context.getExternalFilesDir(null), "EScan/Images");
+        File filesDir = new File(context.getExternalFilesDir(null), "EScan/Files");
+
+        int imageCount = (imagesDir.exists() && imagesDir.isDirectory()) ? imagesDir.listFiles().length : 0;
+        int fileCount = (filesDir.exists() && filesDir.isDirectory()) ? filesDir.listFiles().length : 0;
+
+        int totalFiles = documentCount + imageCount + fileCount;
+        Log.d(TAG, "Total saved files: " + totalFiles + " (Documents=" + documentCount +
+                ", Images=" + imageCount + ", Files=" + fileCount + ")");
+        return totalFiles;
     }
 
     /**
@@ -226,9 +277,8 @@ public class LibraryRepository {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            // Handle database upgrades if needed
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOCUMENTS);
             onCreate(db);
         }
     }
-} 
+}
