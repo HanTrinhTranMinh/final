@@ -1,14 +1,12 @@
 package com.quang.escan.ui.library;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,12 +21,10 @@ import com.quang.escan.R;
 import com.quang.escan.databinding.FragmentLibraryBinding;
 import com.quang.escan.model.ExtractedDocument;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-/**
- * Fragment for displaying and managing scanned documents
- * Provides filtering and organization of documents by category
- */
 public class LibraryFragment extends Fragment implements DocumentAdapter.DocumentClickListener {
 
     private static final String TAG = "LibraryFragment";
@@ -37,6 +33,7 @@ public class LibraryFragment extends Fragment implements DocumentAdapter.Documen
     private LibraryRepository repository;
     private DocumentAdapter adapter;
     private String[] categories = {"Personal", "Work", "School", "Others"};
+    private int currentSortMode = 0; // 0: default, 1: alphabet, 2: date
 
     @Nullable
     @Override
@@ -51,103 +48,108 @@ public class LibraryFragment extends Fragment implements DocumentAdapter.Documen
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated: Setting up library fragment");
-        
+
         navController = Navigation.findNavController(view);
         repository = new LibraryRepository(requireContext());
-        
+
         setupTabLayout();
         setupRecyclerView();
         setupClickListeners();
-        
-        // Check if we need to select a specific category
+        setupSortButton();
+
         checkForCategorySelection();
     }
-    
-    /**
-     * Check if the activity was started with a specific category to select
-     */
-    private void checkForCategorySelection() {
-        if (getActivity() != null && getActivity().getIntent() != null) {
-            String selectedCategory = getActivity().getIntent().getStringExtra("selected_category");
-            if (selectedCategory != null && !selectedCategory.isEmpty()) {
-                // Find the appropriate tab and select it
-                for (int i = 0; i < categories.length; i++) {
-                    if (categories[i].equals(selectedCategory)) {
-                        binding.tabLayout.getTabAt(i).select();
-                        break;
-                    }
-                }
+
+    private void setupSortButton() {
+        binding.sortButton.setOnClickListener(v -> showSortPopupMenu(v));
+    }
+
+    private void showSortPopupMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(requireContext(), anchor);
+        popup.getMenuInflater().inflate(R.menu.sort_menu, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.action_sort_alphabet) {
+                currentSortMode = 1;
+                sortAndRefreshDocuments();
+                return true;
+            } else if (itemId == R.id.action_sort_date) {
+                currentSortMode = 2;
+                sortAndRefreshDocuments();
+                return true;
             }
+            return false;
+        });
+
+        popup.show();
+    }
+
+    private void sortAndRefreshDocuments() {
+        int selectedTab = binding.tabLayout.getSelectedTabPosition();
+        if (selectedTab >= 0 && selectedTab < categories.length) {
+            filterDocumentsByCategory(selectedTab);
         }
     }
 
-    /**
-     * Set up tab layout for document filtering by category
-     */
+    private void filterDocumentsByCategory(int tabPosition) {
+        Log.d(TAG, "Filtering documents by category: " + categories[tabPosition]);
+
+        List<ExtractedDocument> documents = repository.getDocumentsByCategory(categories[tabPosition]);
+
+        if (documents != null) {
+            switch (currentSortMode) {
+                case 1: // Alphabetical
+                    Collections.sort(documents, (doc1, doc2) ->
+                            doc1.getFileName().compareToIgnoreCase(doc2.getFileName()));
+                    break;
+                case 2: // Date
+                    Collections.sort(documents, (doc1, doc2) -> {
+                        if (doc1.getCreationDate() == null || doc2.getCreationDate() == null) {
+                            return 0;
+                        }
+                        return doc2.getCreationDate().compareTo(doc1.getCreationDate()); // Mới nhất trước
+                    });
+                    break;
+                default: // Default sorting (by creation date DESC from database)
+                    break;
+            }
+
+            adapter.setDocuments(documents);
+            checkIfEmpty(documents.isEmpty());
+        } else {
+            adapter.setDocuments(new ArrayList<>());
+            checkIfEmpty(true);
+        }
+    }
+
     private void setupTabLayout() {
         Log.d(TAG, "Setting up tab layout");
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d(TAG, "Tab selected: " + tab.getPosition());
-                // Filter documents based on selected category
                 filterDocumentsByCategory(tab.getPosition());
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                // Not needed
-            }
+            public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                // Not needed
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
     }
 
-    /**
-     * Filter documents based on the selected category
-     * @param tabPosition The position of the selected tab
-     */
-    private void filterDocumentsByCategory(int tabPosition) {
-        Log.d(TAG, "Filtering documents by category: " + categories[tabPosition]);
-        
-        // Get documents from repository
-        List<ExtractedDocument> documents = repository.getDocumentsByCategory(categories[tabPosition]);
-        
-        // Update adapter
-        adapter.setDocuments(documents);
-        
-        // Show empty state if needed
-        checkIfEmpty(documents.isEmpty());
-    }
-
-    /**
-     * Set up the recycler view for displaying documents
-     */
     private void setupRecyclerView() {
         Log.d(TAG, "Setting up recycler view");
-        
-        // Initialize adapter
+
         adapter = new DocumentAdapter(requireContext(), this);
-        
-        // Set up recycler view
         binding.recyclerDocuments.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         binding.recyclerDocuments.setAdapter(adapter);
-        
-        // Load initial data (Personal category)
-        List<ExtractedDocument> documents = repository.getDocumentsByCategory("Personal");
-        adapter.setDocuments(documents);
-        
-        // Check if empty for initial state
-        checkIfEmpty(documents.isEmpty());
+
+        filterDocumentsByCategory(0); // Load "Personal" category first
     }
 
-    /**
-     * Show empty state or document list based on whether documents exist
-     * @param isEmpty Whether there are no documents to display
-     */
     private void checkIfEmpty(boolean isEmpty) {
         Log.d(TAG, "Checking if document list is empty: " + isEmpty);
         if (isEmpty) {
@@ -159,100 +161,76 @@ public class LibraryFragment extends Fragment implements DocumentAdapter.Documen
         }
     }
 
-    /**
-     * Set up click listeners for UI interactions
-     */
     private void setupClickListeners() {
         Log.d(TAG, "Setting up click listeners");
     }
-    
-    /**
-     * Handle document click
-     */
+
+    private void checkForCategorySelection() {
+        if (getActivity() != null && getActivity().getIntent() != null) {
+            String selectedCategory = getActivity().getIntent().getStringExtra("selected_category");
+            if (selectedCategory != null && !selectedCategory.isEmpty()) {
+                for (int i = 0; i < categories.length; i++) {
+                    if (categories[i].equals(selectedCategory)) {
+                        binding.tabLayout.getTabAt(i).select();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void onDocumentClick(ExtractedDocument document) {
-        // Navigate to document viewer fragment
-        Log.d(TAG, "Opening document: " + document.getFileName());
-        
-        // Create bundle with document ID
         Bundle args = new Bundle();
         args.putLong("document_id", document.getId());
-        
-        // Navigate to document viewer
         navController.navigate(R.id.navigation_document_viewer, args);
     }
-    
-    /**
-     * Handle document long click
-     */
+
     @Override
     public boolean onDocumentLongClick(ExtractedDocument document) {
-        // Show options dialog (delete, etc.)
         showDocumentOptionsDialog(document);
         return true;
     }
-    
-    /**
-     * Show dialog with document options
-     */
+
     private void showDocumentOptionsDialog(ExtractedDocument document) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(document.getFileName());
-        
+
         String[] options = {"View", "Share", "Delete"};
-        
+
         builder.setItems(options, (dialog, which) -> {
             switch (which) {
                 case 0:
-                    // View document
                     onDocumentClick(document);
                     break;
                 case 1:
-                    // Share document
                     shareDocument(document);
                     break;
                 case 2:
-                    // Delete document
                     confirmDocumentDeletion(document);
                     break;
             }
         });
-        
+
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
-    
-    /**
-     * Share document content and image
-     */
+
     private void shareDocument(ExtractedDocument document) {
-        // Create document viewer fragment to handle sharing
         DocumentViewerFragment fragment = DocumentViewerFragment.newInstance(document.getId());
-        
-        // We can't directly call methods on the fragment without attaching it,
-        // so we'll navigate to it to view and share from there
         onDocumentClick(document);
-        
-        // Show toast instruction
         Toast.makeText(requireContext(), "Opening document for sharing...", Toast.LENGTH_SHORT).show();
     }
-    
-    /**
-     * Confirm document deletion
-     */
+
     private void confirmDocumentDeletion(ExtractedDocument document) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Delete Document");
         builder.setMessage("Are you sure you want to delete '" + document.getFileName() + "'?");
-        
+
         builder.setPositiveButton("Delete", (dialog, which) -> {
-            // Delete from repository
             boolean deleted = repository.deleteDocument(document.getId());
-            
             if (deleted) {
                 Toast.makeText(requireContext(), "Document deleted", Toast.LENGTH_SHORT).show();
-                
-                // Refresh the current category view
                 int selectedTab = binding.tabLayout.getSelectedTabPosition();
                 if (selectedTab < categories.length) {
                     filterDocumentsByCategory(selectedTab);
@@ -261,7 +239,7 @@ public class LibraryFragment extends Fragment implements DocumentAdapter.Documen
                 Toast.makeText(requireContext(), "Error deleting document", Toast.LENGTH_SHORT).show();
             }
         });
-        
+
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
@@ -272,4 +250,4 @@ public class LibraryFragment extends Fragment implements DocumentAdapter.Documen
         Log.d(TAG, "onDestroyView: Cleaning up library fragment");
         binding = null;
     }
-} 
+}

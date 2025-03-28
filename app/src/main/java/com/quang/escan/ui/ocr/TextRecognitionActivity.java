@@ -35,6 +35,7 @@ public class TextRecognitionActivity extends AppCompatActivity
     private static final int FEATURE_EXTRACT_TEXT = 0;
     private static final int FEATURE_EXTRACT_HANDWRITING = 1;
 
+    private boolean flashEnabled = false;
     private ActivityTextRecognitionBinding binding;
     private TextRecognitionHelper textRecognitionHelper;
     private Uri imageUri;
@@ -59,6 +60,8 @@ public class TextRecognitionActivity extends AppCompatActivity
 
         // Ánh xạ btnTranslate
         btnTranslate = findViewById(R.id.btn_translate);
+
+
 
         // Setup UI
         setupToolbar();

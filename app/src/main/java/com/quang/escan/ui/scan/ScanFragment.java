@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
@@ -68,6 +69,8 @@ public class ScanFragment extends Fragment {
     private String currentPhotoPath;
     private BarcodeScanner barcodeScanner;
     private ImageAnalysis imageAnalysis;
+
+    private Camera camera;
 
     @Nullable
     @Override
@@ -142,16 +145,6 @@ public class ScanFragment extends Fragment {
                 Navigation.findNavController(requireView()).navigateUp();
             });
             
-            // Flash toggle
-            binding.btnFlash.setOnClickListener(v -> {
-                Log.d(TAG, "Flash button clicked");
-                flashEnabled = !flashEnabled;
-                Toast.makeText(requireContext(), 
-                        flashEnabled ? "Flash enabled" : "Flash disabled", 
-                        Toast.LENGTH_SHORT).show();
-
-                // Flash implementation would be here
-            });
         } catch (Exception e) {
             Log.e(TAG, "Error setting up click listeners", e);
         }

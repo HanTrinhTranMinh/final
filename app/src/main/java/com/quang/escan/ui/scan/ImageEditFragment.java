@@ -6,14 +6,18 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -40,7 +44,7 @@ public class ImageEditFragment extends Fragment {
     private static final String ARG_FOR_TEXT_RECOGNITION = "for_text_recognition";
     private static final String ARG_FOR_QR_SCAN = "for_qr_scan";
     private static final String ARG_FEATURE_TYPE = "feature_type";
-    
+
     private FragmentImageEditBinding binding;
     private NavController navController;
     private String imagePath;
@@ -50,6 +54,33 @@ public class ImageEditFragment extends Fragment {
     private boolean isForTextRecognition = false;
     private boolean isForQrScan = false;
     private int featureType = -1;
+
+    // Activity result launcher for cropping
+    private final ActivityResultLauncher<Intent> cropImageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
+                    Uri croppedUri = result.getData().getData();
+                    try {
+                        InputStream stream = requireContext().getContentResolver().openInputStream(croppedUri);
+                        currentBitmap = BitmapFactory.decodeStream(stream);
+                        binding.imagePreview.setImageBitmap(currentBitmap);
+                        stream.close();
+                        Log.d(TAG, "Image cropped successfully");
+
+                        // Sau khi cắt ảnh, nếu là chế độ nhận diện text, tiến hành nhận diện ngay
+                        if (isForTextRecognition) {
+                            launchTextRecognitionAfterCrop();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error loading cropped image", e);
+                        showToast("Error loading cropped image: " + e.getMessage());
+                    }
+                } else {
+                    Log.d(TAG, "Crop operation cancelled or failed");
+                }
+            });
+
 
     /**
      * Create a new instance of the fragment with image path as argument
@@ -72,8 +103,8 @@ public class ImageEditFragment extends Fragment {
             isForTextRecognition = getArguments().getBoolean(ARG_FOR_TEXT_RECOGNITION, false);
             isForQrScan = getArguments().getBoolean(ARG_FOR_QR_SCAN, false);
             featureType = getArguments().getInt(ARG_FEATURE_TYPE, -1);
-            Log.d(TAG, "Received image path: " + imagePath + 
-                       ", forTextRecognition: " + isForTextRecognition + 
+            Log.d(TAG, "Received image path: " + imagePath +
+                       ", forTextRecognition: " + isForTextRecognition +
                        ", forQrScan: " + isForQrScan +
                        ", featureType: " + featureType);
         }
@@ -92,12 +123,12 @@ public class ImageEditFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "onViewCreated: Setting up image edit fragment");
-        
+
         navController = Navigation.findNavController(view);
-        
+
         // Set up toolbar
         binding.toolbar.setNavigationOnClickListener(v -> navigateUp());
-        
+
         // Get arguments
         Bundle args = getArguments();
         if (args != null) {
@@ -106,11 +137,11 @@ public class ImageEditFragment extends Fragment {
             isForQrScan = args.getBoolean("for_qr_scan", false);
             featureType = args.getInt("feature_type", -1);
         }
-        
+
         // Load and display the image
         if (imagePath != null) {
             loadImage();
-            
+
             // If this is for QR scanning, scan the image immediately
             if (isForQrScan && originalBitmap != null) {
                 scanQrCode(originalBitmap);
@@ -119,7 +150,7 @@ public class ImageEditFragment extends Fragment {
             showToast("No image provided");
             navigateUp();
         }
-        
+
         // Set up click listeners
         setupClickListeners();
     }
@@ -138,12 +169,12 @@ public class ImageEditFragment extends Fragment {
         try {
             // First try to parse as a URI
             Uri imageUri = Uri.parse(imagePath);
-            
+
             // Check if it's a content URI
-            if (imageUri.getScheme() != null && (imageUri.getScheme().equals("content") || 
+            if (imageUri.getScheme() != null && (imageUri.getScheme().equals("content") ||
                                                  imageUri.getScheme().equals("file"))) {
                 Log.d(TAG, "Loading image from URI: " + imageUri);
-                
+
                 // Load bitmap from content resolver
                 try (InputStream stream = requireContext().getContentResolver().openInputStream(imageUri)) {
                     if (stream != null) {
@@ -159,11 +190,11 @@ public class ImageEditFragment extends Fragment {
                     navController.navigateUp();
                     return;
                 }
-                
+
                 // Load bitmap from file
                 originalBitmap = BitmapFactory.decodeFile(imagePath);
             }
-            
+
             if (originalBitmap == null) {
                 Log.e(TAG, "Failed to decode bitmap from: " + imagePath);
                 showToast("Error: Could not load image");
@@ -187,19 +218,18 @@ public class ImageEditFragment extends Fragment {
     private void setupClickListeners() {
         // Rotate image button
         binding.btnRotate.setOnClickListener(v -> rotateImage());
-        
+
         // Crop image button
         binding.btnCrop.setOnClickListener(v -> cropImage());
-        
+
         // Set click listener for the back button
         binding.btnBack.setOnClickListener(v -> navigateUp());
-        
+
         // Set click listener for the next button
         binding.btnNext.setOnClickListener(v -> {
             if (isForTextRecognition) {
-                launchTextRecognition();
+                launchTextRecognitionAfterCrop(); // Sử dụng ảnh đã cắt
             } else if (isForQrScan) {
-                // If current bitmap is not null, scan it for QR code
                 if (currentBitmap != null) {
                     scanQrCode(currentBitmap);
                 } else {
@@ -225,14 +255,14 @@ public class ImageEditFragment extends Fragment {
             Matrix matrix = new Matrix();
             matrix.postRotate(90);
             currentBitmap = Bitmap.createBitmap(
-                    currentBitmap, 
-                    0, 
-                    0, 
-                    currentBitmap.getWidth(), 
+                    currentBitmap,
+                    0,
+                    0,
+                    currentBitmap.getWidth(),
                     currentBitmap.getHeight(),
-                    matrix, 
+                    matrix,
                     true);
-            
+
             binding.imagePreview.setImageBitmap(currentBitmap);
             Log.d(TAG, "Image rotated to " + rotationDegrees + " degrees");
         } catch (Exception e) {
@@ -245,9 +275,44 @@ public class ImageEditFragment extends Fragment {
      * Crop the image
      */
     private void cropImage() {
-        // Implementation needed
-        showToast("Crop feature coming soon");
+        if (currentBitmap == null) {
+            Log.e(TAG, "Cannot crop null bitmap");
+            showToast("No image to crop");
+            return;
+        }
+
+        try {
+            // Lưu bitmap hiện tại thành file tạm thời
+            File tempFile = new File(requireContext().getCacheDir(), "temp_image.jpg");
+            currentBitmap.compress(Bitmap.CompressFormat.JPEG, 100, new java.io.FileOutputStream(tempFile));
+
+            // Sử dụng FileProvider để tạo URI an toàn
+            Uri imageUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.quang.escan.fileprovider", // Thay bằng authority của bạn
+                    tempFile
+            );
+
+            // Tạo Intent crop
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(imageUri, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("outputX", 500);
+            cropIntent.putExtra("outputY", 500);
+            cropIntent.putExtra("return-data", false);
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+            cropImageLauncher.launch(cropIntent);
+        } catch (Exception e) {
+            Log.e(TAG, "Error initiating crop", e);
+            showToast("Error initiating crop: " + e.getMessage());
+        }
     }
+
+
 
     /**
      * Launch the TextRecognitionActivity to process the image
@@ -262,7 +327,7 @@ public class ImageEditFragment extends Fragment {
                 // Convert file path to URI
                 imageUri = Uri.fromFile(new File(imagePath));
             }
-            
+
             Intent intent = new Intent(requireContext(), com.quang.escan.ui.ocr.TextRecognitionActivity.class);
             intent.putExtra(com.quang.escan.ui.ocr.TextRecognitionActivity.EXTRA_IMAGE_URI, imageUri.toString());
             // Pass feature type to distinguish between text and handwriting recognition
@@ -275,6 +340,41 @@ public class ImageEditFragment extends Fragment {
     }
 
     /**
+     * Launch text recognition with the cropped bitmap
+     */
+    private void launchTextRecognitionAfterCrop() {
+        if (currentBitmap == null) {
+            Log.e(TAG, "No cropped bitmap available for text recognition");
+            showToast("No image available for recognition");
+            return;
+        }
+
+        try {
+            // Lưu currentBitmap thành file tạm thời
+            File tempFile = new File(requireContext().getCacheDir(), "cropped_image.jpg");
+            currentBitmap.compress(Bitmap.CompressFormat.JPEG, 100, new java.io.FileOutputStream(tempFile));
+
+            // Tạo Uri từ file tạm thời
+            Uri croppedImageUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.quang.escan.fileprovider", // Đảm bảo authority khớp với manifest
+                    tempFile
+            );
+
+            // Khởi chạy TextRecognitionActivity với Uri của ảnh đã cắt
+            Intent intent = new Intent(requireContext(), com.quang.escan.ui.ocr.TextRecognitionActivity.class);
+            intent.putExtra(com.quang.escan.ui.ocr.TextRecognitionActivity.EXTRA_IMAGE_URI, croppedImageUri.toString());
+            intent.putExtra("feature_type", featureType);
+            startActivity(intent);
+
+            Log.d(TAG, "Launched text recognition with cropped image");
+        } catch (Exception e) {
+            Log.e(TAG, "Error launching text recognition with cropped image", e);
+            showToast("Error launching recognition: " + e.getMessage());
+        }
+    }
+
+    /**
      * Scan QR code from bitmap
      */
     private void scanQrCode(Bitmap bitmap) {
@@ -282,21 +382,21 @@ public class ImageEditFragment extends Fragment {
             showToast("Failed to load image for QR scanning");
             return;
         }
-        
+
         // Show loading state
         binding.btnNext.setEnabled(false);
         showToast("Scanning for QR codes...");
-        
+
         try {
             // Create barcode scanner
             BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
                     .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
                     .build();
             BarcodeScanner scanner = BarcodeScanning.getClient(options);
-            
+
             // Create input image from bitmap
             InputImage image = InputImage.fromBitmap(bitmap, 0);
-            
+
             // Process the image
             scanner.process(image)
                     .addOnSuccessListener(barcodes -> {
@@ -304,7 +404,7 @@ public class ImageEditFragment extends Fragment {
                             Barcode barcode = barcodes.get(0);
                             String qrValue = barcode.getRawValue();
                             Log.d(TAG, "QR code detected: " + qrValue);
-                            
+
                             // Launch QR result activity
                             launchQrResultActivity(qrValue);
                         } else {
@@ -323,7 +423,7 @@ public class ImageEditFragment extends Fragment {
             binding.btnNext.setEnabled(true);
         }
     }
-    
+
     /**
      * Launch QR result activity with the detected QR code value
      */
@@ -333,7 +433,7 @@ public class ImageEditFragment extends Fragment {
                 Intent intent = new Intent(requireContext(), com.quang.escan.ui.qr.QrResultActivity.class);
                 intent.putExtra(com.quang.escan.ui.qr.QrResultActivity.EXTRA_QR_VALUE, qrValue);
                 startActivity(intent);
-                
+
                 // Go back to home after launching the result activity
                 navigateUp();
             }
@@ -365,18 +465,18 @@ public class ImageEditFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Log.d(TAG, "onDestroyView: Cleaning up resources");
-        
+
         // Clean up bitmaps to avoid memory leaks
         if (originalBitmap != null && !originalBitmap.isRecycled()) {
             originalBitmap.recycle();
             originalBitmap = null;
         }
-        
+
         if (currentBitmap != null && !currentBitmap.isRecycled() && currentBitmap != originalBitmap) {
             currentBitmap.recycle();
             currentBitmap = null;
         }
-        
+
         binding = null;
     }
-} 
+}

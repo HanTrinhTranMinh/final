@@ -23,16 +23,6 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/btn_flash"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Toggle Flash"
-            android:src="@android:drawable/ic_menu_compass"
-            android:tint="@color/white" />
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.camera.view.PreviewView

@@ -95,4 +95,7 @@ dependencies {
 
     //thư viện sơ đồ
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+
+
 }
